@@ -102,8 +102,7 @@ namespace vending_machine
                                     Console.WriteLine($"Enjoy your {selectedItem.ProductName.ToLower()}!");
                                     Console.ResetColor();
                                     Console.WriteLine();
-                                    Console.Clear();
-                                    
+
                                     PurchasedVendingItems.Add(VendingItems[number - 1]);
                                     VendingItems.Remove(VendingItems[number - 1]);
                                     break;
@@ -146,9 +145,12 @@ namespace vending_machine
                     }
                     else
                     {
+                        Console.ForegroundColor = ConsoleColor.Cyan;
+                        Console.WriteLine("--Your purchased items--");
+                        Console.ResetColor();
                         foreach (var purchasedItem in PurchasedVendingItems)
                         {
-                            Console.WriteLine($"-- {purchasedItem.ProductName}");
+                            Console.WriteLine($"- {purchasedItem.ProductName}");
                         }
                     }
                 }
