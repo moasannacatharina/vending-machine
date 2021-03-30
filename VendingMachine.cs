@@ -7,7 +7,7 @@ namespace vending_machine
     {
 
         public List<VendingItem> VendingItems = new List<VendingItem>();
-        public List<VendingItem> PurchasedVendingItems;
+        public List<VendingItem> PurchasedVendingItems = new List<VendingItem>();
         public BankAccount Account;
 
         public VendingMachine(BankAccount account)
@@ -37,6 +37,7 @@ namespace vending_machine
                 "1",
                 "2",
                 "3",
+                "4",
                 "Q",
             };
 
@@ -134,6 +135,24 @@ namespace vending_machine
                     Console.ResetColor();
                 }
 
+
+                if (command == "4")
+                {
+                    if (PurchasedVendingItems.Count == 0)
+                    {
+                        Console.ForegroundColor = ConsoleColor.Red;
+                        Console.WriteLine("You haven't purchased any items yet.. :(");
+                        Console.ResetColor();
+                    }
+                    else
+                    {
+                        foreach (var purchasedItem in PurchasedVendingItems)
+                        {
+                            Console.WriteLine($"-- {purchasedItem.ProductName}");
+                        }
+                    }
+                }
+
                 if (command == "Q")
                 {
                     Console.WriteLine("Sad to see you go :( Goodbye!");
@@ -155,6 +174,7 @@ namespace vending_machine
                 Console.WriteLine("1] Display Vending Machine Items");
                 Console.WriteLine("2] Purchase");
                 Console.WriteLine("3] Check Bank Account");
+                Console.WriteLine("4] View Your Purchased Items");
                 Console.WriteLine("Q] Quit");
                 
                 Console.ForegroundColor = ConsoleColor.Yellow;
