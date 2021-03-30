@@ -8,10 +8,8 @@ namespace vending_machine
         static void Main(string[] args)
         {
             var account = new BankAccount();
-            
-            account.Deposit(400);
-
-            var vendingMachine = new VendingMachine();
+            account.Deposit(100);
+            var vendingMachine = new VendingMachine(account);
 
             vendingMachine.Run();
 

@@ -7,19 +7,21 @@ namespace vending_machine
     {
 
         public List<VendingItem> VendingItems = new List<VendingItem>();
-        private List<string> ItemIds = new List<string>();
+        public List<VendingItem> PurchasedVendingItems;
         public BankAccount Account;
 
-        public VendingMachine()
+        public VendingMachine(BankAccount account)
         {
-            VendingItems.Add(new VendingItem("A1","Snickers", 15));
-            VendingItems.Add(new VendingItem("A2","Eggs", 50));
-            VendingItems.Add(new VendingItem("B1","Lion", 25));
-            VendingItems.Add(new VendingItem("B2","Chips", 20));
-            VendingItems.Add(new VendingItem("C1","Olives", 30));
-            VendingItems.Add(new VendingItem("C2","Coca Cola", 25));
-            VendingItems.Add(new VendingItem("D1","Beer", 75));
-            VendingItems.Add(new VendingItem("D2","Birthday cake", 36));
+            VendingItems.Add(new VendingItem("Snickers", 15));
+            VendingItems.Add(new VendingItem("Eggs", 50));
+            VendingItems.Add(new VendingItem("Ice Coffee", 25));
+            VendingItems.Add(new VendingItem("Chips", 20));
+            VendingItems.Add(new VendingItem("Olives", 30));
+            VendingItems.Add(new VendingItem("Coca Cola", 25));
+            VendingItems.Add(new VendingItem("Beer", 75));
+            VendingItems.Add(new VendingItem("Birthday cake", 36)); 
+
+            this.Account = account;
         }
        
         public void Run()
@@ -34,6 +36,7 @@ namespace vending_machine
             {
                 "1",
                 "2",
+                "3",
                 "Q",
             };
 
@@ -43,36 +46,92 @@ namespace vending_machine
 
                 if (command == "1")
                 {
-                    Console.ForegroundColor = ConsoleColor.Cyan;
-                    Console.WriteLine("--Available items for purchase--");
-                    Console.ResetColor();
-
-                    foreach (var item in VendingItems)
+                    var index = 1;
+                    
+                    if (VendingItems.Count == 0)
                     {
-                        Console.WriteLine($"{item.Id}] {item.ProductName}, ${item.Price}");
+                        Console.ForegroundColor = ConsoleColor.Red;
+                        Console.WriteLine("No items available :(");
+                        Console.ResetColor();
                     }
+                    else
+                    {
+                        Console.ForegroundColor = ConsoleColor.Cyan;
+                        Console.WriteLine("--Available items for purchase--");
+                        Console.ResetColor();
+                        foreach (var item in VendingItems)
+                        {
+                            Console.WriteLine($"{index++}] {item.ProductName}, ${item.Price}");
+                        }
+                    }
+                    
                 }
 
                 if (command == "2")
                 {
-                    Console.ForegroundColor = ConsoleColor.Blue;
-                    Console.Write("Which item would you like to purchase? "); 
-                    Console.ResetColor();
-                    var input = Console.ReadLine();
-                    if (input != "") 
+                    while (true)
                     {
-                        foreach (var item in VendingItems)
+                        Console.ForegroundColor = ConsoleColor.Cyan;
+                        Console.Write("Which item would you like to purchase? "); 
+                        Console.ResetColor();
+
+                        var input = Console.ReadLine();
+                        int.TryParse(input, out int number);
+
+                        if (number > VendingItems.Count || number < 1)
                         {
-                            if (input == item.Id)
-                            {
-                                Console.WriteLine($"You have selected {item.ProductName}! Please insert ${item.Price}");
-                                
-                            }
+                            Console.WriteLine("Item does not exist");
                         }
-                        Console.WriteLine("Item not found");
-                        continue;
+                        else
+                        {
+                            var selectedItem = VendingItems[number - 1];
+                            Console.WriteLine($"You have selected {selectedItem.ProductName}");
+                            Console.Write($"Do you wish to transfer ${selectedItem.Price} to the Vending Machine? y/n: ");
+
+                            var answer = Console.ReadLine();
+
+                            if (answer == "y")
+                            {
+                                if (Account.Balance() >= selectedItem.Price)
+                                {
+                                    Account.Withdraw(selectedItem.Price);
+                                    Console.WriteLine();
+                                    Console.ForegroundColor = ConsoleColor.Cyan;
+                                    Console.WriteLine($"Successful transaction! Yay! You now have ${Account.Balance()} left. ");
+                                    Console.WriteLine($"Enjoy your {selectedItem.ProductName.ToLower()}!");
+                                    Console.ResetColor();
+                                    Console.WriteLine();
+                                    Console.Clear();
+                                    
+                                    PurchasedVendingItems.Add(VendingItems[number - 1]);
+                                    VendingItems.Remove(VendingItems[number - 1]);
+                                    break;
+                                }
+
+                                Console.WriteLine();
+                                Console.ForegroundColor = ConsoleColor.Red;
+                                Console.WriteLine($"You don't have enough money for this item, your balance is currently ${Account.Balance()}.");
+                                Console.WriteLine("Please try again.");
+                                Console.ResetColor();
+                                Console.WriteLine();
+                            }
+
+                            if (answer == "n")
+                            {
+                                Console.WriteLine("Weird, but ok.");
+                            }
+
+                        }
                         
                     }
+
+                }
+
+                if (command == "3")
+                {
+                    Console.ForegroundColor = ConsoleColor.Cyan;
+                    Console.WriteLine($"You have ${Account.Balance()} on your account!");
+                    Console.ResetColor();
                 }
 
                 if (command == "Q")
@@ -84,7 +143,7 @@ namespace vending_machine
             
         }
 
-        public string GetCommand(List<string> commands)
+        private string GetCommand(List<string> commands)
         {
             while (true)
             {
@@ -92,11 +151,15 @@ namespace vending_machine
                 Console.WriteLine();
                 Console.WriteLine("Main Menu");
                 Console.ResetColor();
+                
                 Console.WriteLine("1] Display Vending Machine Items");
                 Console.WriteLine("2] Purchase");
+                Console.WriteLine("3] Check Bank Account");
                 Console.WriteLine("Q] Quit");
                 
-                Console.Write("What option do you want to select? ");
+                Console.ForegroundColor = ConsoleColor.Yellow;
+                Console.Write("Which option would you like to select? ");
+                Console.ResetColor();
 
                 var input = Console.ReadLine();
 
