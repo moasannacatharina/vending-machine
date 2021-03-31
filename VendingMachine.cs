@@ -146,11 +146,11 @@ namespace vending_machine
                     else
                     {
                         Console.ForegroundColor = ConsoleColor.Cyan;
-                        Console.WriteLine("--Your purchased items--");
+                        Console.WriteLine("--Your receipt--");
                         Console.ResetColor();
                         foreach (var purchasedItem in PurchasedVendingItems)
                         {
-                            Console.WriteLine($"- {purchasedItem.ProductName}");
+                            Console.WriteLine($"{purchasedItem.ProductName} ---- ${purchasedItem.Price}");
                         }
                     }
                 }
@@ -176,7 +176,7 @@ namespace vending_machine
                 Console.WriteLine("1] Display Vending Machine Items");
                 Console.WriteLine("2] Purchase");
                 Console.WriteLine("3] Check Bank Account");
-                Console.WriteLine("4] View Your Purchased Items");
+                Console.WriteLine("4] Check Receipt");
                 Console.WriteLine("Q] Quit");
                 
                 Console.ForegroundColor = ConsoleColor.Yellow;
